@@ -59,11 +59,12 @@ export default function Graph({
   }, [nodes, edges]);
 
   useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    if (!svgRef.current) return;
+    const svgEl = svgRef.current;
+    if (!svgEl) return;
 
-    const width = svgRef.current.clientWidth;
-    const height = svgRef.current.clientHeight;
+    const svg = d3.select(svgEl) as d3.Selection<SVGSVGElement, unknown, null, undefined>;
+    const width = svgEl.clientWidth;
+    const height = svgEl.clientHeight;
 
     svg.selectAll("*").remove();
 
@@ -268,8 +269,8 @@ export default function Graph({
         const connectedIds = new Set<string>();
         connectedIds.add(selectedNodeId);
         currentLinks.forEach((l) => {
-          const sId = typeof l.source === "object" ? (l.source as SimNode).id : l.source;
-          const tId = typeof l.target === "object" ? (l.target as SimNode).id : l.target;
+          const sId = typeof l.source === "object" ? (l.source as SimNode).id : String(l.source);
+          const tId = typeof l.target === "object" ? (l.target as SimNode).id : String(l.target);
           if (sId === selectedNodeId || tId === selectedNodeId) {
             connectedIds.add(sId);
             connectedIds.add(tId);
@@ -277,13 +278,13 @@ export default function Graph({
         });
         nodeMerged.style("opacity", (d) => (connectedIds.has(d.id) ? 1 : 0.15));
         linesMerged.style("opacity", (d) => {
-          const sId = typeof d.source === "object" ? (d.source as SimNode).id : d.source;
-          const tId = typeof d.target === "object" ? (d.target as SimNode).id : d.target;
+          const sId = typeof d.source === "object" ? (d.source as SimNode).id : String(d.source);
+          const tId = typeof d.target === "object" ? (d.target as SimNode).id : String(d.target);
           return sId === selectedNodeId || tId === selectedNodeId ? 1 : 0.08;
         });
         labelsMerged.style("opacity", (d) => {
-          const sId = typeof d.source === "object" ? (d.source as SimNode).id : d.source;
-          const tId = typeof d.target === "object" ? (d.target as SimNode).id : d.target;
+          const sId = typeof d.source === "object" ? (d.source as SimNode).id : String(d.source);
+          const tId = typeof d.target === "object" ? (d.target as SimNode).id : String(d.target);
           return sId === selectedNodeId || tId === selectedNodeId ? 1 : 0.08;
         });
       } else {
